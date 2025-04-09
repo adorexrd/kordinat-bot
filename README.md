@@ -63,6 +63,14 @@ Bu URI'yi `main.py` içinde `MONGO_URI` yerine yapıştır.
 Bot başarıyla başlatılır.
 
 ---
+### 6. Botu Sunucumuza Ekleme
+```
+https://discord.com/oauth2/authorize?client_id=BOT_ID&permissions=8&scope=bot+applications.commands
+Üsteki Link'in BOT_ID Yazan Kısma Discord Botunuzun İD Girin.
+Discord Developer'den Bir Bot Seçin. Botunuz Yoksa. New Application Diyip Bot Oluşturun.
+Sol Taraftan OAuth2 Seçin Ve Client ID Kopyalayın.
+
+---
 
 ## ⚙️ Komutlar
 
