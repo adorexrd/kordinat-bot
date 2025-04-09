@@ -69,7 +69,7 @@ https://discord.com/oauth2/authorize?client_id=BOT_ID&permissions=8&scope=bot+ap
 Üsteki Link'in BOT_ID Yazan Kısma Discord Botunuzun İD Girin.
 Discord Developer'den Bir Bot Seçin. Botunuz Yoksa. New Application Diyip Bot Oluşturun.
 Sol Taraftan OAuth2 Seçin Ve Client ID Kopyalayın.
-
+```
 ---
 
 ## ⚙️ Komutlar
