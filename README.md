@@ -1,35 +1,96 @@
 # 🤖 Titanyum Koordinat Botu
 
-Bu bot, **SonOyuncu Titanyum** sunucusunda çoklu hesapları yönetmek, koordinatlara göre en yakın hesabı bulmak ve Minecraft tarzı koordinat sisteminde hesapların durumunu görmek için tasarlanmıştır. Bot, **Slash komutları** ile çalışır, **MongoDB** ile verileri saklar ve kullanımı kolay, kullanıcı dostu bir arayüz sunar.
+Minecraft Titanyum sunucusunda, oyuncuların hesaplarını ve koordinatlarını yönetmek için geliştirilmiş Discord Slash komut botu.
 
 ---
 
-## 🌟 Özellikler
+## ✨ Özellikler
 
-- **Hesap Ekleme**: Farklı dünyalara ait koordinat bilgilerini girebilir, yeni hesaplar ekleyebilirsiniz.
-- **Hesap Silme**: İstediğiniz bir hesabı veritabanından silebilirsiniz.
-- **Koordinat Sorgulama**: Girilen dünyanın ve koordinatın (X Z) verilerine göre, en yakın hesabı bulabilirsiniz.
-- **Slash Komutlar**: Tüm komutlar Discord’un slash komut sistemi ile çalışır.
-- **MongoDB Desteği**: Hesap verileri MongoDB üzerinde saklanır.
+- Slash komut sistemiyle etkileşimli kullanım
+- MongoDB veritabanı entegrasyonu
+- Hesap ekleme, silme ve koordinata göre en yakın hesabı bulma
+- -30.000 ile +30.000 arası koordinat doğrulama
+- Embed mesajlarla şık görünüm
+- Sadece yetkili rolü olanlar hesap ekleyip silebilir
+- Koordinat sorgulama komutunu herkes kullanabilir
 
 ---
 
-## 🛠️ Gereksinimler
+## 🚀 Kurulum
 
-### Yazılım Gereksinimleri
+### 1. Python Yükle
+Python 3.10+ versiyonunu indir ve kur:
+👉 https://www.python.org/downloads/
 
-- **Python 3.10+**  
-  [Python İndirme](https://www.python.org/downloads/)
+### 2. MongoDB Hesabı Oluştur
+1. https://www.mongodb.com/ adresine git
+2. Ücretsiz bir hesap oluştur
+3. Yeni bir "Cluster" oluştur
+4. Veritabanı kullanıcı adı/şifresi belirle
+5. "Database Deploy" edildikten sonra → **Connect** > **MongoDB for VS Code** > **Connect to your MongoDB deployment.** kısmından bağlantı URI'ını kopyala.
+<username>:<password>' Kısmını Şu Şekilde Düzenle: adore:adore123
 
-- **MongoDB Atlas Hesabı veya Local MongoDB**  
-  MongoDB Atlas ücretsiz planı ile [kaydolabilir ve veritabanı oluşturabilirsiniz](https://www.mongodb.com/cloud/atlas/register).
+Örnek URI:
+```
+mongodb+srv://kullanici:parola@cluster0.mongodb.net/?retryWrites=true&w=majority
+```
 
-- **Discord Botu**  
-  [Discord Geliştirici Portalı](https://discord.com/developers/applications) üzerinden bot oluşturup token alın.
+Bu URI'yi `main.py` içinde `MONGO_URI` yerine yapıştır.
 
-### Kütüphaneler
+### 3. Bot Tokeni Al
+1. https://discord.com/developers/applications adresine git
+2. Yeni bir uygulama oluştur
+3. "Bot" sekmesinden botu oluştur ve tokeni al
+4. Gerekli izinleri ver (MESSAGE, EMBED, APPLICATION_COMMANDS vs.)
+5. Tokeni `main.py` içindeki `TOKEN` kısmına yapıştır
 
-Aşağıdaki kütüphaneler gereklidir. Terminal veya komut satırından yükleyebilirsiniz:
+---
 
+## 🖥️ Botun Çalışması
+
+### 4. Kurulum
+`kurulum.bat` dosyasına çift tıklayarak gerekli kütüphaneleri yükleyin:
+```
+🔧 kurulum.bat
+```
+
+> Bu dosya `discord.py` ve `pymongo` gibi paketleri yükler.
+
+### 5. Botu Başlatma
+```
+🚀 baslat.bat
+```
+Bot başarıyla başlatılır.
+
+---
+
+## ⚙️ Komutlar
+
+### `/hesapekle`
+Yeni hesap ekler.
 ```bash
-pip install -U discord.py pymongo
+/hesapekle isim: deneme sancak: "30 -20" yakamoz: "50 100" ...
+```
+
+### `/hesapsil`
+Belirtilen isme sahip hesabı siler.
+```bash
+/hesapsil isim: deneme
+```
+
+### `/kordinat`
+Girilen dünya ve koordinata göre en yakın hesabı gösterir.
+```bash
+/kordinat dunya: sancak kordinat: 30 -50
+```
+
+---
+
+## 📄 Lisans
+
+MIT License kullanılmıştır. Dilediğiniz gibi kullanabilir ve geliştirebilirsiniz.
+
+---
+
+🎉 İyi oyunlar ve kolaylıklar! Herhangi bir sorun yaşarsanız discord: Adorexrd Arkadaşlık İsteği Atarak Bildirebilirsiniz.
+
