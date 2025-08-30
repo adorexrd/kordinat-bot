@@ -6,9 +6,9 @@ import os
 import math
 
 # CONFIG
-TOKEN = "YOUR_DISCORD_BOT_TOKEN"
-MONGO_URI = "YOUR_MONGODB_CONNECTION_STRING"
-GEREKLI_ROL_ID = 1359281485189873724  # Değiştirin
+TOKEN = "token gir"
+MONGO_URI = "mongo url"
+GEREKLI_ROL_ID = 1411131197131591821  # Değiştirin
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -101,7 +101,7 @@ async def hesapsil(interaction: discord.Interaction, isim: str):
     embed = discord.Embed(title="🗑️ Hesap Silindi", description=f"`{isim}` adlı hesap silindi.", color=0xff0000)
     await interaction.response.send_message(embed=embed)
 
-@bot.tree.command(name="kordinat", description="Koordinatlara göre en yakın hesabı bul")
+@bot.tree.command(name="kordinat", description="Koordinatlara göre en yakın hesapları bul")
 @app_commands.describe(dunya="Dünya adı", kordinat="X Z şeklinde koordinat")
 async def kordinat(interaction: discord.Interaction, dunya: str, kordinat: str):
     try:
@@ -111,36 +111,63 @@ async def kordinat(interaction: discord.Interaction, dunya: str, kordinat: str):
         return await interaction.response.send_message("❌ Koordinat formatı yanlış. Örn: -30 20", ephemeral=True)
 
     dunya = dunya.lower()
-    en_yakin_hesap = None
-    min_mesafe = float("inf")
-    en_yakin_koordinat = (0, 0)
+    hesap_mesafeleri = []
 
     for hesap in hesaplar.find():
         koordinatlar = hesap["dunyalar"].get(dunya)
         if not koordinatlar:
             continue
 
-        hx = koordinatlar["x"]
-        hz = koordinatlar["z"]
+        hx, hz = koordinatlar["x"], koordinatlar["z"]
         mesafe = math.sqrt((hx - x) ** 2 + (hz - z) ** 2)
+        hesap_mesafeleri.append((mesafe, hesap["isim"], (hx, hz)))
 
-        if mesafe < min_mesafe:
-            min_mesafe = mesafe
-            en_yakin_hesap = hesap
-            en_yakin_koordinat = (hx, hz)
+    if not hesap_mesafeleri:
+        return await interaction.response.send_message("❌ Uygun hesap bulunamadı.", ephemeral=True)
 
-    if en_yakin_hesap:
-        embed = discord.Embed(
-            title="📍 En Yakın Hesap",
-            color=0x2ecc71
+    hesap_mesafeleri.sort(key=lambda t: t[0])
+
+    # Embed oluştur
+    embed = discord.Embed(
+        title=f"📍 En Yakın Hesaplar ({dunya.capitalize()})",
+        color=0x1abc9c
+    )
+    embed.add_field(name="Aradığınız Koordinat", value=f"`{x} {z}`", inline=False)
+
+    # En yakın 3 hesabı ekle
+    for i, (mesafe, isim, (hx, hz)) in enumerate(hesap_mesafeleri[:3], start=1):
+        embed.add_field(
+            name=f"{i}. En Yakın Hesap",
+            value=f"**{isim}**\nKoordinat: `{hx} {hz}`\nMesafe: `{int(round(mesafe))} blok`",
+            inline=False
         )
-        embed.add_field(name="Dünya", value=dunya.capitalize(), inline=False)
-        embed.add_field(name="En Yakın Hesap", value=en_yakin_hesap['isim'], inline=False)
-        embed.add_field(name="En Yakın Hesap Koordinatı", value=f"{en_yakin_koordinat[0]} {en_yakin_koordinat[1]}", inline=False)
-        embed.add_field(name="Aradığınız Koordinat", value=f"{x} {z}", inline=False)
-        embed.add_field(name="Mesafe", value=f"{int(round(min_mesafe))} blok", inline=False)
-        await interaction.response.send_message(embed=embed)
-    else:
-        await interaction.response.send_message("❌ Uygun hesap bulunamadı.", ephemeral=True)
+
+    # Footer ekle: Kullanıcı ve saat
+    embed.set_footer(
+        text=f"Kullanıcı: {interaction.user} | Tarih: {interaction.created_at.strftime('%d-%m-%Y %H:%M:%S')}",
+        icon_url=interaction.user.avatar.url if interaction.user.avatar else None
+    )
+
+    await interaction.response.send_message(embed=embed)
+
+@bot.tree.command(name="hesaplar", description="Sistemdeki toplam hesap sayısını gösterir")
+async def hesaplar_command(interaction: discord.Interaction):
+    toplam_hesap = hesaplar.count_documents({})  # Veritabanındaki tüm hesapları say
+
+    embed = discord.Embed(
+        title="📊 Toplam Hesaplar",
+        description=f"Sistemde toplam **{toplam_hesap}** hesap bulunmaktadır.",
+        color=0x3498db
+    )
+
+    # Footer: Komutu kullanan kişi ve tarih
+    embed.set_footer(
+        text=f"Kullanıcı: {interaction.user} | Tarih: {interaction.created_at.strftime('%d-%m-%Y %H:%M:%S')}",
+        icon_url=interaction.user.avatar.url if interaction.user.avatar else None
+    )
+
+    await interaction.response.send_message(embed=embed)
+
+
 
 bot.run(TOKEN)
