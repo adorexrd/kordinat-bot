@@ -6,8 +6,8 @@ import os
 import math
 
 # CONFIG
-TOKEN = "token gir"
-MONGO_URI = "mongo url"
+TOKEN = "TOKEN"
+MONGO_URI = "MONGO_URI"
 GEREKLI_ROL_ID = 1411131197131591821  # Değiştirin
 
 intents = discord.Intents.default()
@@ -168,6 +168,34 @@ async def hesaplar_command(interaction: discord.Interaction):
 
     await interaction.response.send_message(embed=embed)
 
+@bot.tree.command(name="hesap-bilgi", description="Bir hesabın tüm dünya koordinatlarını gösterir")
+@app_commands.describe(isim="Bilgilerini görmek istediğiniz hesap adı")
+async def hesap_bilgi(interaction: discord.Interaction, isim: str):
+    if not rol_kontrol(interaction):
+        return await interaction.response.send_message("❌ Yetkin yok.", ephemeral=True)
+
+    hesap = hesaplar.find_one({"isim": isim})
+    if not hesap:
+        return await interaction.response.send_message("❌ Böyle bir hesap bulunamadı.", ephemeral=True)
+
+    dunya_bilgileri = ""
+    for dunya, coords in hesap["dunyalar"].items():
+        if coords:
+            dunya_bilgileri += f"**{dunya.capitalize()}**: `{coords['x']} {coords['z']}`\n"
+        else:
+            dunya_bilgileri += f"**{dunya.capitalize()}**: `Bilgi yok`\n"
+
+    embed = discord.Embed(
+        title=f"📋 Hesap Bilgisi: {isim}",
+        description=dunya_bilgileri,
+        color=0x00ff00
+    )
+    embed.set_footer(
+        text=f"Kullanıcı: {interaction.user} | Tarih: {interaction.created_at.strftime('%d-%m-%Y %H:%M:%S')}",
+        icon_url=interaction.user.avatar.url if interaction.user.avatar else None
+    )
+
+    await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 bot.run(TOKEN)
